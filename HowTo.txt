@@ -1,0 +1,616 @@
+>>> from parseQosOutput import show_cmd_output_analyze
+>>> cfg = ''.join(lines)
+>>> print(cfg)
+ GigabitEthernet0/0/0
+
+  Service-policy output: parent
+
+    Class-map: class-default (match-any)
+      108 packets, 44450 bytes
+      5 minute offered rate 0000 bps, drop rate 0000 bps
+      Match: any
+      Queueing
+      queue limit 2916 packets
+      (queue depth/total drops/no-buffer drops) 0/0/0
+      (pkts output/bytes output) 25/2950
+      shape (average) cir 700000000, bc 7000000, be 7000000
+      target shape rate 700000000
+
+      Service-policy : child
+
+        Class-map: acl101 (match-any)
+          0 packets, 0 bytes
+          5 minute offered rate 0000 bps, drop rate 0000 bps
+          Match: access-group 101
+          Queueing
+          queue limit 1749 packets
+          (queue depth/total drops/no-buffer drops) 0/0/0
+          (pkts output/bytes output) 0/0
+          shape (average) cir 420000000, bc 4200000, be 4200000
+          target shape rate 420000000
+
+          Service-policy : grandChild
+
+            queue stats for all priority classes:
+              Queueing
+              priority level 1
+              queue limit 512 packets
+              (queue depth/total drops/no-buffer drops) 0/0/0
+              (pkts output/bytes output) 0/0
+
+            Class-map: prec1 (match-any)
+              0 packets, 0 bytes
+              5 minute offered rate 0000 bps, drop rate 0000 bps
+              Match: ip precedence 1
+              Queueing
+              queue limit 174 packets
+              (queue depth/total drops/no-buffer drops) 0/0/0
+              (pkts output/bytes output) 0/0
+              bandwidth 10% (42000 kbps)
+
+            Class-map: prec2 (match-any)
+              0 packets, 0 bytes
+              5 minute offered rate 0000 bps, drop rate 0000 bps
+              Match: ip precedence 2
+              Queueing
+              queue limit 262 packets
+              (queue depth/total drops/no-buffer drops) 0/0/0
+              (pkts output/bytes output) 0/0
+              bandwidth 15% (63000 kbps)
+                Exp-weight-constant: 9 (1/512)
+                Mean queue depth: 0 packets
+                class       Transmitted         Random drop      Tail drop          Minimum        Maximum     Mark
+                        pkts/bytes            pkts/bytes       pkts/bytes          thresh         thresh     prob
+
+                0               0/0               0/0              0/0                 65           131  1/10
+                1               0/0               0/0              0/0                 73           131  1/10
+                2               0/0               0/0              0/0                 81           131  1/10
+                3               0/0               0/0              0/0                 89           131  1/10
+                4               0/0               0/0              0/0                 97           131  1/10
+                5               0/0               0/0              0/0                105           131  1/10
+                6               0/0               0/0              0/0                113           131  1/10
+                7               0/0               0/0              0/0                121           131  1/10
+
+            Class-map: prec3 (match-any)
+              0 packets, 0 bytes
+              5 minute offered rate 0000 bps, drop rate 0000 bps
+              Match: ip precedence 3
+              Queueing
+              queue limit 437 packets
+              (queue depth/total drops/no-buffer drops) 0/0/0
+              (pkts output/bytes output) 0/0
+              shape (average) cir 105000000, bc 1050000, be 1050000
+              target shape rate 105000000
+
+            Class-map: prec4 (match-any)
+              0 packets, 0 bytes
+              5 minute offered rate 0000 bps, drop rate 0000 bps
+              Match: ip precedence 4
+              police:
+                  cir 20 %
+                  cir 84000000 bps, bc 2625000 bytes
+                conformed 0 packets, 0 bytes; actions:
+                  transmit
+                exceeded 0 packets, 0 bytes; actions:
+                  drop
+                conformed 0000 bps, exceeded 0000 bps
+              Priority: Strict, b/w exceed drops: 0
+
+              Priority Level: 1
+
+            Class-map: prec5 (match-any)
+              0 packets, 0 bytes
+              5 minute offered rate 0000 bps, drop rate 0000 bps
+              Match: ip precedence 5
+              police:
+                  cir 10 %
+                  cir 42000000 bps, bc 1312500 bytes
+                conformed 0 packets, 0 bytes; actions:
+                  transmit
+                exceeded 0 packets, 0 bytes; actions:
+                  drop
+                conformed 0000 bps, exceeded 0000 bps
+
+            Class-map: class-default (match-any)
+              0 packets, 0 bytes
+              5 minute offered rate 0000 bps, drop rate 0000 bps
+              Match: any
+
+              queue limit 1749 packets
+              (queue depth/total drops/no-buffer drops) 0/0/0
+              (pkts output/bytes output) 0/0
+
+        Class-map: acl102 (match-any)
+          0 packets, 0 bytes
+          5 minute offered rate 0000 bps, drop rate 0000 bps
+          Match: access-group 102
+          Queueing
+          queue limit 1749 packets
+          (queue depth/total drops/no-buffer drops) 0/0/0
+          (pkts output/bytes output) 0/0
+          shape (average) cir 420000000, bc 4200000, be 4200000
+          target shape rate 420000000
+
+        Class-map: class-default (match-any)
+          108 packets, 44450 bytes
+          5 minute offered rate 0000 bps, drop rate 0000 bps
+          Match: any
+
+          queue limit 2916 packets
+          (queue depth/total drops/no-buffer drops) 0/0/0
+          (pkts output/bytes output) 25/2950
+
+>>> ins = show_cmd_output_analyze(cfg)
+>>> ins.printDict()
+output
+  parent
+    class-default
+      match_method = any
+      packets = 108
+      bytes = 44450
+      offered_rate = 0000
+      drop_rate = 0000
+      match_types = any
+      queue_limit = 2916
+      queue_depth = 0
+      total_drops = 0
+      nobuffer_drops = 0
+      pkts_output = 25
+      bytes_output = 2950
+      shape_avg_cir = 700000000
+      shape_avg_bc = 7000000
+      shape_avg_be = 7000000
+      shape_rate = 700000000
+      child
+        acl101
+          match_method = any
+          packets = 0
+          bytes = 0
+          offered_rate = 0000
+          drop_rate = 0000
+          match_types = access-group 101
+          queue_limit = 1749
+          queue_depth = 0
+          total_drops = 0
+          nobuffer_drops = 0
+          pkts_output = 0
+          bytes_output = 0
+          shape_avg_cir = 420000000
+          shape_avg_bc = 4200000
+          shape_avg_be = 4200000
+          shape_rate = 420000000
+          grandChild
+            queue_stats
+              priority_level = 1
+              queue_limit = 512
+              queue_depth = 0
+              total_drops = 0
+              nobuffer_drops = 0
+              pkts_output = 0
+              bytes_output = 0
+            prec1
+              match_method = any
+              packets = 0
+              bytes = 0
+              offered_rate = 0000
+              drop_rate = 0000
+              match_types = ip precedence 1
+              queue_limit = 174
+              queue_depth = 0
+              total_drops = 0
+              nobuffer_drops = 0
+              pkts_output = 0
+              bytes_output = 0
+              bandwidth_percent = 10%
+              bandwidth_speed = 42000 kbps
+            prec2
+              match_method = any
+              packets = 0
+              bytes = 0
+              offered_rate = 0000
+              drop_rate = 0000
+              match_types = ip precedence 2
+              queue_limit = 262
+              queue_depth = 0
+              total_drops = 0
+              nobuffer_drops = 0
+              pkts_output = 0
+              bytes_output = 0
+              bandwidth_percent = 15%
+              bandwidth_speed = 63000 kbps
+              exp_weight_constant = 9
+              decay_constant = 1/512
+              mean_queue_depth = 0
+              precedence
+                0
+                  wred_tx_pkts = 0
+                  wred_tx_bytes = 0
+                  rand_drops_pkts = 0
+                  rand_drops_bytes = 0
+                  tail_drops_pkts = 0
+                  tail_drops_bytes = 0
+                  min_thresh = 65
+                  max_thresh = 131
+                  mark_prob = 1/10
+                1
+                  wred_tx_pkts = 0
+                  wred_tx_bytes = 0
+                  rand_drops_pkts = 0
+                  rand_drops_bytes = 0
+                  tail_drops_pkts = 0
+                  tail_drops_bytes = 0
+                  min_thresh = 73
+                  max_thresh = 131
+                  mark_prob = 1/10
+                2
+                  wred_tx_pkts = 0
+                  wred_tx_bytes = 0
+                  rand_drops_pkts = 0
+                  rand_drops_bytes = 0
+                  tail_drops_pkts = 0
+                  tail_drops_bytes = 0
+                  min_thresh = 81
+                  max_thresh = 131
+                  mark_prob = 1/10
+                3
+                  wred_tx_pkts = 0
+                  wred_tx_bytes = 0
+                  rand_drops_pkts = 0
+                  rand_drops_bytes = 0
+                  tail_drops_pkts = 0
+                  tail_drops_bytes = 0
+                  min_thresh = 89
+                  max_thresh = 131
+                  mark_prob = 1/10
+                4
+                  wred_tx_pkts = 0
+                  wred_tx_bytes = 0
+                  rand_drops_pkts = 0
+                  rand_drops_bytes = 0
+                  tail_drops_pkts = 0
+                  tail_drops_bytes = 0
+                  min_thresh = 97
+                  max_thresh = 131
+                  mark_prob = 1/10
+                5
+                  wred_tx_pkts = 0
+                  wred_tx_bytes = 0
+                  rand_drops_pkts = 0
+                  rand_drops_bytes = 0
+                  tail_drops_pkts = 0
+                  tail_drops_bytes = 0
+                  min_thresh = 105
+                  max_thresh = 131
+                  mark_prob = 1/10
+                6
+                  wred_tx_pkts = 0
+                  wred_tx_bytes = 0
+                  rand_drops_pkts = 0
+                  rand_drops_bytes = 0
+                  tail_drops_pkts = 0
+                  tail_drops_bytes = 0
+                  min_thresh = 113
+                  max_thresh = 131
+                  mark_prob = 1/10
+                7
+                  wred_tx_pkts = 0
+                  wred_tx_bytes = 0
+                  rand_drops_pkts = 0
+                  rand_drops_bytes = 0
+                  tail_drops_pkts = 0
+                  tail_drops_bytes = 0
+                  min_thresh = 121
+                  max_thresh = 131
+                  mark_prob = 1/10
+            prec3
+              match_method = any
+              packets = 0
+              bytes = 0
+              offered_rate = 0000
+              drop_rate = 0000
+              match_types = ip precedence 3
+              queue_limit = 437
+              queue_depth = 0
+              total_drops = 0
+              nobuffer_drops = 0
+              pkts_output = 0
+              bytes_output = 0
+              shape_avg_cir = 105000000
+              shape_avg_bc = 1050000
+              shape_avg_be = 1050000
+              shape_rate = 105000000
+            prec4
+              match_method = any
+              packets = 0
+              bytes = 0
+              offered_rate = 0000
+              drop_rate = 0000
+              match_types = ip precedence 4
+              police
+                cir_percent = 20
+                cir_bps = 84000000
+                cir_limit = 2625000
+                conformed_pkt = 0
+                conformed_bytes = 0
+                conformed_action = transmit
+                exceeded_pkt = 0
+                exceeded_bytes = 0
+                exceeded_action = drop
+                conform_bps = 0000
+                exceed_bps = 0000
+              priority_level = 1
+            prec5
+              match_method = any
+              packets = 0
+              bytes = 0
+              offered_rate = 0000
+              drop_rate = 0000
+              match_types = ip precedence 5
+              police
+                cir_percent = 10
+                cir_bps = 42000000
+                cir_limit = 1312500
+                conformed_pkt = 0
+                conformed_bytes = 0
+                conformed_action = transmit
+                exceeded_pkt = 0
+                exceeded_bytes = 0
+                exceeded_action = drop
+                conform_bps = 0000
+                exceed_bps = 0000
+            class-default
+              match_method = any
+              packets = 0
+              bytes = 0
+              offered_rate = 0000
+              drop_rate = 0000
+              match_types = any
+              queue_limit = 1749
+              queue_depth = 0
+              total_drops = 0
+              nobuffer_drops = 0
+              pkts_output = 0
+              bytes_output = 0
+        acl102
+          match_method = any
+          packets = 0
+          bytes = 0
+          offered_rate = 0000
+          drop_rate = 0000
+          match_types = access-group 102
+          queue_limit = 1749
+          queue_depth = 0
+          total_drops = 0
+          nobuffer_drops = 0
+          pkts_output = 0
+          bytes_output = 0
+          shape_avg_cir = 420000000
+          shape_avg_bc = 4200000
+          shape_avg_be = 4200000
+          shape_rate = 420000000
+        class-default
+          match_method = any
+          packets = 108
+          bytes = 44450
+          offered_rate = 0000
+          drop_rate = 0000
+          match_types = any
+          queue_limit = 2916
+          queue_depth = 0
+          total_drops = 0
+          nobuffer_drops = 0
+          pkts_output = 25
+          bytes_output = 2950
+>>> ins.outputDict['output']
+[u'parent']
+>>> ins.outputDict['output.parent']
+[u'class-default']
+>>> ins.outputDict['output.parent.class-default']
+[u'match_method', u'packets', u'bytes', u'offered_rate', u'drop_rate', u'match_types', u'queue_limit', u'queue_depth', u'total_drops', u'nobuffer_drops', u'pkts_output', u'bytes_output', u'shape_avg_cir', u'shape_avg_bc', u'shape_avg_be', u'shape_rate', u'child']
+>>> ins.outputDict['output.parent.class-default.match_method']
+[u'any']
+>>> ins.printDict('output.parent.class-default.child.acl101.grandChild.queue_stats')
+queue_stats
+  priority_level = 1
+  queue_limit = 512
+  queue_depth = 0
+  total_drops = 0
+  nobuffer_drops = 0
+  pkts_output = 0
+  bytes_output = 0
+>>> ins.exportDict('output.parent.class-default.child.acl101.grandChild')
+{u'grandChild.prec4.police.exceeded_pkt': [u'0'], u'grandChild.prec2.precedence.7.wred_tx_bytes': [u'0'], u'grandChild.prec2.precedence.4.rand_drops_pkts': [u'0'], u'grandChild.prec4.police.exceed_bps': [u'0000'], u'grandChild.prec3.queue_limit': [u'437'], u'grandChild.prec4.priority_level': [u'1'], u'grandChild.prec5.police.conformed_bytes': [u'0'], u'grandChild.prec2.precedence.5.mark_prob': [u'1/10'], u'grandChild.prec1.nobuffer_drops': [u'0'], u'grandChild.prec2.precedence.6.mark_prob': [u'1/10'], u'grandChild.prec5.match_types': [u'ip precedence 5'], u'grandChild.prec2.precedence.6.tail_drops_bytes': [u'0'], u'grandChild.class-default.bytes': [u'0'], u'grandChild.prec2.precedence.1.wred_tx_bytes': [u'0'], u'grandChild.prec2.precedence.7.mark_prob': [u'1/10'], u'grandChild.prec2.precedence.1.max_thresh': [u'131'], u'grandChild.class-default.match_method': [u'any'], u'grandChild.prec4.police.exceeded_action': [u'drop'], u'grandChild.class-default': [u'match_method', u'packets', u'bytes', u'offered_rate', u'drop_rate', u'match_types', u'queue_limit', u'queue_depth', u'total_drops', u'nobuffer_drops', u'pkts_output', u'bytes_output'], u'grandChild.prec3.shape_rate': [u'105000000'], u'grandChild.prec4.police.cir_percent': [u'20'], u'grandChild.prec2.precedence.3.max_thresh': [u'131'], u'grandChild.prec2.precedence.7.tail_drops_bytes': [u'0'], u'grandChild.class-default.packets': [u'0'], u'grandChild.prec4.offered_rate': [u'0000'], u'grandChild.prec2.precedence.1.mark_prob': [u'1/10'], u'grandChild.prec2.precedence.4.mark_prob': [u'1/10'], u'grandChild.prec4': [u'match_method', u'packets', u'bytes', u'offered_rate', u'drop_rate', u'match_types', u'police', u'priority_level'], u'grandChild.class-default.queue_depth': [u'0'], u'grandChild.prec4.drop_rate': [u'0000'], u'grandChild.class-default.bytes_output': [u'0'], u'grandChild.prec2.precedence.2.wred_tx_bytes': [u'0'], u'grandChild.prec2.precedence.6.tail_drops_pkts': [u'0'], u'grandChild.prec5.police.exceeded_action': [u'drop'], u'grandChild.prec1.match_types': [u'ip precedence 1'], u'grandChild.prec3.drop_rate': [u'0000'], u'grandChild.prec2.bandwidth_speed': [u'63000 kbps'], u'grandChild.prec2.precedence.0.wred_tx_pkts': [u'0'], u'grandChild.prec1.bytes_output': [u'0'], u'grandChild.prec3.offered_rate': [u'0000'], u'grandChild.class-default.match_types': [u'any'], u'grandChild.prec2.precedence.3.tail_drops_bytes': [u'0'], u'grandChild.prec3.packets': [u'0'], u'grandChild.class-default.offered_rate': [u'0000'], u'grandChild.prec5.police': [u'cir_percent', u'cir_bps', u'cir_limit', u'conformed_pkt', u'conformed_bytes', u'conformed_action', u'exceeded_pkt', u'exceeded_bytes', u'exceeded_action', u'conform_bps', u'exceed_bps'], u'grandChild.prec4.police.conformed_action': [u'transmit'], u'grandChild.prec2.precedence.3.wred_tx_pkts': [u'0'], u'grandChild.prec5.police.cir_percent': [u'10'], u'grandChild.prec2.match_types': [u'ip precedence 2'], u'grandChild.prec4.police.exceeded_bytes': [u'0'], u'grandChild.queue_stats.queue_depth': [u'0'], u'grandChild.prec1.queue_limit': [u'174'], u'grandChild.prec2.precedence.4': [u'wred_tx_pkts', u'wred_tx_bytes', u'rand_drops_pkts', u'rand_drops_bytes', u'tail_drops_pkts', u'tail_drops_bytes', u'min_thresh', u'max_thresh', u'mark_prob'], u'grandChild.prec2.precedence.6.min_thresh': [u'113'], u'grandChild.prec2.precedence.3.tail_drops_pkts': [u'0'], u'grandChild.prec2.precedence.2': [u'wred_tx_pkts', u'wred_tx_bytes', u'rand_drops_pkts', u'rand_drops_bytes', u'tail_drops_pkts', u'tail_drops_bytes', u'min_thresh', u'max_thresh', u'mark_prob'], u'grandChild.prec2.precedence.4.wred_tx_bytes': [u'0'], u'grandChild.prec2.bytes': [u'0'], u'grandChild.prec2.precedence.7.rand_drops_pkts': [u'0'], u'grandChild.prec3.bytes_output': [u'0'], u'grandChild.prec2.precedence.5.rand_drops_bytes': [u'0'], u'grandChild.prec2.precedence.4.rand_drops_bytes': [u'0'], u'grandChild.prec1.offered_rate': [u'0000'], u'grandChild.prec2.precedence.6.wred_tx_pkts': [u'0'], u'grandChild.prec2.precedence.2.wred_tx_pkts': [u'0'], u'grandChild.prec4.police': [u'cir_percent', u'cir_bps', u'cir_limit', u'conformed_pkt', u'conformed_bytes', u'conformed_action', u'exceeded_pkt', u'exceeded_bytes', u'exceeded_action', u'conform_bps', u'exceed_bps'], u'grandChild.prec5.bytes': [u'0'], u'grandChild.prec1.match_method': [u'any'], u'grandChild.prec2.precedence': [u'0', u'1', u'2', u'3', u'4', u'5', u'6', u'7'], u'grandChild.prec2.precedence.1.min_thresh': [u'73'], u'grandChild.prec2': [u'match_method', u'packets', u'bytes', u'offered_rate', u'drop_rate', u'match_types', u'queue_limit', u'queue_depth', u'total_drops', u'nobuffer_drops', u'pkts_output', u'bytes_output', u'bandwidth_percent', u'bandwidth_speed', u'exp_weight_constant', u'decay_constant', u'mean_queue_depth', u'precedence'], u'grandChild.prec3': [u'match_method', u'packets', u'bytes', u'offered_rate', u'drop_rate', u'match_types', u'queue_limit', u'queue_depth', u'total_drops', u'nobuffer_drops', u'pkts_output', u'bytes_output', u'shape_avg_cir', u'shape_avg_bc', u'shape_avg_be', u'shape_rate'], u'grandChild.prec2.precedence.7': [u'wred_tx_pkts', u'wred_tx_bytes', u'rand_drops_pkts', u'rand_drops_bytes', u'tail_drops_pkts', u'tail_drops_bytes', u'min_thresh', u'max_thresh', u'mark_prob'], u'grandChild.prec2.precedence.6': [u'wred_tx_pkts', u'wred_tx_bytes', u'rand_drops_pkts', u'rand_drops_bytes', u'tail_drops_pkts', u'tail_drops_bytes', u'min_thresh', u'max_thresh', u'mark_prob'], u'grandChild.prec2.precedence.5': [u'wred_tx_pkts', u'wred_tx_bytes', u'rand_drops_pkts', u'rand_drops_bytes', u'tail_drops_pkts', u'tail_drops_bytes', u'min_thresh', u'max_thresh', u'mark_prob'], u'grandChild.prec4.match_types': [u'ip precedence 4'], u'grandChild.prec2.precedence.3': [u'wred_tx_pkts', u'wred_tx_bytes', u'rand_drops_pkts', u'rand_drops_bytes', u'tail_drops_pkts', u'tail_drops_bytes', u'min_thresh', u'max_thresh', u'mark_prob'], u'grandChild.prec2.precedence.7.rand_drops_bytes': [u'0'], u'grandChild.prec2.precedence.1': [u'wred_tx_pkts', u'wred_tx_bytes', u'rand_drops_pkts', u'rand_drops_bytes', u'tail_drops_pkts', u'tail_drops_bytes', u'min_thresh', u'max_thresh', u'mark_prob'], u'grandChild.prec2.precedence.0': [u'wred_tx_pkts', u'wred_tx_bytes', u'rand_drops_pkts', u'rand_drops_bytes', u'tail_drops_pkts', u'tail_drops_bytes', u'min_thresh', u'max_thresh', u'mark_prob'], u'grandChild.class-default.queue_limit': [u'1749'], u'grandChild.prec2.precedence.1.rand_drops_bytes': [u'0'], u'grandChild.prec5.police.conform_bps': [u'0000'], u'grandChild.prec4.police.conformed_pkt': [u'0'], u'grandChild.prec2.precedence.3.min_thresh': [u'89'], u'grandChild.prec2.precedence.1.tail_drops_pkts': [u'0'], u'grandChild.prec5.police.exceeded_bytes': [u'0'], u'grandChild.prec2.precedence.6.rand_drops_bytes': [u'0'], u'grandChild.prec2.precedence.5.max_thresh': [u'131'], u'grandChild.prec5.police.conformed_action': [u'transmit'], u'grandChild.prec2.precedence.3.mark_prob': [u'1/10'], u'grandChild.prec2.precedence.7.tail_drops_pkts': [u'0'], u'grandChild.prec2.bandwidth_percent': [u'15%'], u'grandChild.prec4.police.cir_bps': [u'84000000'], u'grandChild.prec3.match_types': [u'ip precedence 3'], u'grandChild.prec2.precedence.2.rand_drops_pkts': [u'0'], u'grandChild.prec4.police.conform_bps': [u'0000'], u'grandChild.prec2.precedence.2.max_thresh': [u'131'], u'grandChild.prec2.exp_weight_constant': [u'9'], u'grandChild.prec1.packets': [u'0'], u'grandChild.prec2.precedence.6.max_thresh': [u'131'], u'grandChild.prec2.packets': [u'0'], u'grandChild.prec2.precedence.7.wred_tx_pkts': [u'0'], u'grandChild.prec4.match_method': [u'any'], u'grandChild.prec2.precedence.0.mark_prob': [u'1/10'], u'grandChild.prec2.precedence.4.tail_drops_pkts': [u'0'], u'grandChild.class-default.pkts_output': [u'0'], u'grandChild.prec1.bytes': [u'0'], u'grandChild.class-default.total_drops': [u'0'], u'grandChild.prec2.precedence.0.rand_drops_pkts': [u'0'], u'grandChild.prec2.precedence.4.tail_drops_bytes': [u'0'], u'grandChild.prec2.precedence.2.tail_drops_bytes': [u'0'], u'grandChild.prec5.police.exceed_bps': [u'0000'], u'grandChild.prec2.precedence.2.mark_prob': [u'1/10'], u'grandChild.prec2.precedence.5.tail_drops_pkts': [u'0'], u'grandChild.prec1.drop_rate': [u'0000'], u'grandChild.queue_stats.queue_limit': [u'512'], u'grandChild.prec4.packets': [u'0'], u'grandChild.prec3.total_drops': [u'0'], u'grandChild.prec1.bandwidth_percent': [u'10%'], u'grandChild.prec4.bytes': [u'0'], u'grandChild.prec2.precedence.0.tail_drops_pkts': [u'0'], u'grandChild.prec2.precedence.5.min_thresh': [u'105'], u'grandChild.prec2.precedence.3.rand_drops_pkts': [u'0'], u'grandChild.prec2.precedence.4.min_thresh': [u'97'], u'grandChild.prec1.bandwidth_speed': [u'42000 kbps'], u'grandChild.prec2.precedence.7.max_thresh': [u'131'], u'grandChild.prec2.match_method': [u'any'], u'grandChild.prec2.precedence.3.wred_tx_bytes': [u'0'], u'grandChild.queue_stats.priority_level': [u'1'], u'grandChild.prec2.precedence.0.min_thresh': [u'65'], u'grandChild.prec2.precedence.1.wred_tx_pkts': [u'0'], u'grandChild.prec3.bytes': [u'0'], u'grandChild.prec2.precedence.0.max_thresh': [u'131'], u'grandChild.prec4.police.cir_limit': [u'2625000'], u'grandChild.prec5.match_method': [u'any'], u'grandChild.prec3.nobuffer_drops': [u'0'], u'grandChild.prec5.drop_rate': [u'0000'], u'grandChild.queue_stats.pkts_output': [u'0'], u'grandChild.prec1.queue_depth': [u'0'], u'grandChild.prec5.police.cir_limit': [u'1312500'], u'grandChild.prec2.precedence.5.rand_drops_pkts': [u'0'], u'grandChild.prec2.precedence.5.tail_drops_bytes': [u'0'], u'grandChild.prec5': [u'match_method', u'packets', u'bytes', u'offered_rate', u'drop_rate', u'match_types', u'police'], u'grandChild.prec2.precedence.6.wred_tx_bytes': [u'0'], u'grandChild.prec2.queue_limit': [u'262'], u'grandChild.class-default.drop_rate': [u'0000'], u'grandChild.prec5.police.exceeded_pkt': [u'0'], u'grandChild.prec3.match_method': [u'any'], u'grandChild.prec2.precedence.4.max_thresh': [u'131'], u'grandChild.prec3.queue_depth': [u'0'], u'grandChild.prec2.precedence.0.tail_drops_bytes': [u'0'], u'grandChild.prec2.precedence.4.wred_tx_pkts': [u'0'], u'grandChild.prec2.precedence.0.rand_drops_bytes': [u'0'], u'grandChild.queue_stats.total_drops': [u'0'], u'grandChild.queue_stats.bytes_output': [u'0'], u'grandChild.prec5.police.conformed_pkt': [u'0'], u'grandChild.prec2.precedence.5.wred_tx_bytes': [u'0'], u'grandChild.prec2.precedence.7.min_thresh': [u'121'], u'grandChild.prec5.packets': [u'0'], u'grandChild.prec2.precedence.1.rand_drops_pkts': [u'0'], u'grandChild.prec2.decay_constant': [u'1/512'], u'grandChild.prec2.queue_depth': [u'0'], u'grandChild.prec2.precedence.2.rand_drops_bytes': [u'0'], u'grandChild.prec1.pkts_output': [u'0'], u'grandChild.prec4.police.conformed_bytes': [u'0'], u'grandChild.prec1.total_drops': [u'0'], u'grandChild.prec2.precedence.0.wred_tx_bytes': [u'0'], u'grandChild.prec2.mean_queue_depth': [u'0'], u'grandChild.prec2.precedence.3.rand_drops_bytes': [u'0'], u'grandChild.prec2.precedence.6.rand_drops_pkts': [u'0'], u'grandChild.prec2.pkts_output': [u'0'], u'grandChild.prec2.total_drops': [u'0'], u'grandChild.prec2.precedence.5.wred_tx_pkts': [u'0'], u'grandChild.prec5.police.cir_bps': [u'42000000'], u'grandChild.prec3.pkts_output': [u'0'], u'grandChild.prec5.offered_rate': [u'0000'], u'grandChild.prec2.precedence.1.tail_drops_bytes': [u'0'], u'grandChild.queue_stats': [u'priority_level', u'queue_limit', u'queue_depth', u'total_drops', u'nobuffer_drops', u'pkts_output', u'bytes_output'], u'grandChild.prec2.precedence.2.tail_drops_pkts': [u'0'], u'grandChild.prec3.shape_avg_cir': [u'105000000'], u'grandChild.queue_stats.nobuffer_drops': [u'0'], u'grandChild.prec2.offered_rate': [u'0000'], u'grandChild.prec2.drop_rate': [u'0000'], 'grandChild': [u'queue_stats', u'prec1', u'prec2', u'prec3', u'prec4', u'prec5', u'class-default'], u'grandChild.prec1': [u'match_method', u'packets', u'bytes', u'offered_rate', u'drop_rate', u'match_types', u'queue_limit', u'queue_depth', u'total_drops', u'nobuffer_drops', u'pkts_output', u'bytes_output', u'bandwidth_percent', u'bandwidth_speed'], u'grandChild.prec2.bytes_output': [u'0'], u'grandChild.prec3.shape_avg_be': [u'1050000'], u'grandChild.class-default.nobuffer_drops': [u'0'], u'grandChild.prec3.shape_avg_bc': [u'1050000'], u'grandChild.prec2.precedence.2.min_thresh': [u'81'], u'grandChild.prec2.nobuffer_drops': [u'0']}
+>>> for key in ins.exportDict('output.parent.class-default.child.acl101.grandChild').keys():print(key)
+...
+grandChild.prec4.police.exceeded_pkt
+grandChild.prec2.precedence.7.wred_tx_bytes
+grandChild.prec2.precedence.4.rand_drops_pkts
+grandChild.prec4.police.exceed_bps
+grandChild.prec3.queue_limit
+grandChild.prec4.priority_level
+grandChild.prec5.police.conformed_bytes
+grandChild.prec2.precedence.5.mark_prob
+grandChild.prec1.nobuffer_drops
+grandChild.prec2.precedence.6.mark_prob
+grandChild.prec5.match_types
+grandChild.prec2.precedence.6.tail_drops_bytes
+grandChild.class-default.bytes
+grandChild.prec2.precedence.1.wred_tx_bytes
+grandChild.prec2.precedence.7.mark_prob
+grandChild.prec2.precedence.1.max_thresh
+grandChild.class-default.match_method
+grandChild.prec4.police.exceeded_action
+grandChild.class-default
+grandChild.prec3.shape_rate
+grandChild.prec4.police.cir_percent
+grandChild.prec2.precedence.3.max_thresh
+grandChild.prec2.precedence.7.tail_drops_bytes
+grandChild.class-default.packets
+grandChild.prec4.offered_rate
+grandChild.prec2.precedence.1.mark_prob
+grandChild.prec2.precedence.4.mark_prob
+grandChild.prec4
+grandChild.class-default.queue_depth
+grandChild.prec4.drop_rate
+grandChild.class-default.bytes_output
+grandChild.prec2.precedence.2.wred_tx_bytes
+grandChild.prec2.precedence.6.tail_drops_pkts
+grandChild.prec5.police.exceeded_action
+grandChild.prec1.match_types
+grandChild.prec3.drop_rate
+grandChild.prec2.bandwidth_speed
+grandChild.prec2.precedence.0.wred_tx_pkts
+grandChild.prec1.bytes_output
+grandChild.prec3.offered_rate
+grandChild.class-default.match_types
+grandChild.prec2.precedence.3.tail_drops_bytes
+grandChild.prec3.packets
+grandChild.class-default.offered_rate
+grandChild.prec5.police
+grandChild.prec4.police.conformed_action
+grandChild.prec2.precedence.3.wred_tx_pkts
+grandChild.prec5.police.cir_percent
+grandChild.prec2.match_types
+grandChild.prec4.police.exceeded_bytes
+grandChild.queue_stats.queue_depth
+grandChild.prec1.queue_limit
+grandChild.prec2.precedence.4
+grandChild.prec2.precedence.6.min_thresh
+grandChild.prec2.precedence.3.tail_drops_pkts
+grandChild.prec2.precedence.2
+grandChild.prec2.precedence.4.wred_tx_bytes
+grandChild.prec2.bytes
+grandChild.prec2.precedence.7.rand_drops_pkts
+grandChild.prec3.bytes_output
+grandChild.prec2.precedence.5.rand_drops_bytes
+grandChild.prec2.precedence.4.rand_drops_bytes
+grandChild.prec1.offered_rate
+grandChild.prec2.precedence.6.wred_tx_pkts
+grandChild.prec2.precedence.2.wred_tx_pkts
+grandChild.prec4.police
+grandChild.prec5.bytes
+grandChild.prec1.match_method
+grandChild.prec2.precedence
+grandChild.prec2.precedence.1.min_thresh
+grandChild.prec2
+grandChild.prec3
+grandChild.prec2.precedence.7
+grandChild.prec2.precedence.6
+grandChild.prec2.precedence.5
+grandChild.prec4.match_types
+grandChild.prec2.precedence.3
+grandChild.prec2.precedence.7.rand_drops_bytes
+grandChild.prec2.precedence.1
+grandChild.prec2.precedence.0
+grandChild.class-default.queue_limit
+grandChild.prec2.precedence.1.rand_drops_bytes
+grandChild.prec5.police.conform_bps
+grandChild.prec4.police.conformed_pkt
+grandChild.prec2.precedence.3.min_thresh
+grandChild.prec2.precedence.1.tail_drops_pkts
+grandChild.prec5.police.exceeded_bytes
+grandChild.prec2.precedence.6.rand_drops_bytes
+grandChild.prec2.precedence.5.max_thresh
+grandChild.prec5.police.conformed_action
+grandChild.prec2.precedence.3.mark_prob
+grandChild.prec2.precedence.7.tail_drops_pkts
+grandChild.prec2.bandwidth_percent
+grandChild.prec4.police.cir_bps
+grandChild.prec3.match_types
+grandChild.prec2.precedence.2.rand_drops_pkts
+grandChild.prec4.police.conform_bps
+grandChild.prec2.precedence.2.max_thresh
+grandChild.prec2.exp_weight_constant
+grandChild.prec1.packets
+grandChild.prec2.precedence.6.max_thresh
+grandChild.prec2.packets
+grandChild.prec2.precedence.7.wred_tx_pkts
+grandChild.prec4.match_method
+grandChild.prec2.precedence.0.mark_prob
+grandChild.prec2.precedence.4.tail_drops_pkts
+grandChild.class-default.pkts_output
+grandChild.prec1.bytes
+grandChild.class-default.total_drops
+grandChild.prec2.precedence.0.rand_drops_pkts
+grandChild.prec2.precedence.4.tail_drops_bytes
+grandChild.prec2.precedence.2.tail_drops_bytes
+grandChild.prec5.police.exceed_bps
+grandChild.prec2.precedence.2.mark_prob
+grandChild.prec2.precedence.5.tail_drops_pkts
+grandChild.prec1.drop_rate
+grandChild.queue_stats.queue_limit
+grandChild.prec4.packets
+grandChild.prec3.total_drops
+grandChild.prec1.bandwidth_percent
+grandChild.prec4.bytes
+grandChild.prec2.precedence.0.tail_drops_pkts
+grandChild.prec2.precedence.5.min_thresh
+grandChild.prec2.precedence.3.rand_drops_pkts
+grandChild.prec2.precedence.4.min_thresh
+grandChild.prec1.bandwidth_speed
+grandChild.prec2.precedence.7.max_thresh
+grandChild.prec2.match_method
+grandChild.prec2.precedence.3.wred_tx_bytes
+grandChild.queue_stats.priority_level
+grandChild.prec2.precedence.0.min_thresh
+grandChild.prec2.precedence.1.wred_tx_pkts
+grandChild.prec3.bytes
+grandChild.prec2.precedence.0.max_thresh
+grandChild.prec4.police.cir_limit
+grandChild.prec5.match_method
+grandChild.prec3.nobuffer_drops
+grandChild.prec5.drop_rate
+grandChild.queue_stats.pkts_output
+grandChild.prec1.queue_depth
+grandChild.prec5.police.cir_limit
+grandChild.prec2.precedence.5.rand_drops_pkts
+grandChild.prec2.precedence.5.tail_drops_bytes
+grandChild.prec5
+grandChild.prec2.precedence.6.wred_tx_bytes
+grandChild.prec2.queue_limit
+grandChild.class-default.drop_rate
+grandChild.prec5.police.exceeded_pkt
+grandChild.prec3.match_method
+grandChild.prec2.precedence.4.max_thresh
+grandChild.prec3.queue_depth
+grandChild.prec2.precedence.0.tail_drops_bytes
+grandChild.prec2.precedence.4.wred_tx_pkts
+grandChild.prec2.precedence.0.rand_drops_bytes
+grandChild.queue_stats.total_drops
+grandChild.queue_stats.bytes_output
+grandChild.prec5.police.conformed_pkt
+grandChild.prec2.precedence.5.wred_tx_bytes
+grandChild.prec2.precedence.7.min_thresh
+grandChild.prec5.packets
+grandChild.prec2.precedence.1.rand_drops_pkts
+grandChild.prec2.decay_constant
+grandChild.prec2.queue_depth
+grandChild.prec2.precedence.2.rand_drops_bytes
+grandChild.prec1.pkts_output
+grandChild.prec4.police.conformed_bytes
+grandChild.prec1.total_drops
+grandChild.prec2.precedence.0.wred_tx_bytes
+grandChild.prec2.mean_queue_depth
+grandChild.prec2.precedence.3.rand_drops_bytes
+grandChild.prec2.precedence.6.rand_drops_pkts
+grandChild.prec2.pkts_output
+grandChild.prec2.total_drops
+grandChild.prec2.precedence.5.wred_tx_pkts
+grandChild.prec5.police.cir_bps
+grandChild.prec3.pkts_output
+grandChild.prec5.offered_rate
+grandChild.prec2.precedence.1.tail_drops_bytes
+grandChild.queue_stats
+grandChild.prec2.precedence.2.tail_drops_pkts
+grandChild.prec3.shape_avg_cir
+grandChild.queue_stats.nobuffer_drops
+grandChild.prec2.offered_rate
+grandChild.prec2.drop_rate
+grandChild
+grandChild.prec1
+grandChild.prec2.bytes_output
+grandChild.prec3.shape_avg_be
+grandChild.class-default.nobuffer_drops
+grandChild.prec3.shape_avg_bc
+grandChild.prec2.precedence.2.min_thresh
+grandChild.prec2.nobuffer_drops
