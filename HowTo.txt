@@ -1,4 +1,7 @@
 >>> from parseQosOutput import show_cmd_output_analyze
+>>> with open('sampeConfig.cfg') as f:
+...     lines = f.readlines()
+...
 >>> cfg = ''.join(lines)
 >>> print(cfg)
  GigabitEthernet0/0/0
