@@ -1,4 +1,4 @@
-demo how to use goes to 'How-to.txt'
+demo how to use goes to 'HowTo.txt'
 
 1. parser tested on python2.7, python3 shoudld be modified by yourself. 
 2. parser workflow:
