@@ -1,3 +1,7 @@
+2019.08.21
+Removed beautifulsoup4 requirements, but if beautifulsoup4 is there, it is still suggest to use it.
+
+
 demo how to use goes to 'HowTo.txt'
 
 1. parser tested on python2.7, python3 shoudld be modified by yourself. 
