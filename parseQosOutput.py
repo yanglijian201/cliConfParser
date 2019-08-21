@@ -1,5 +1,6 @@
-import bs4
+# import bs4
 import re
+from collections import OrderedDict
 
 class CommonMappingFunc:
 
@@ -36,7 +37,8 @@ class CommonMappingFunc:
           return True
       else:
         return False      
-
+    '''
+    ## Remove BS4 dependency
     def covertSpaceToXML(self):
       ####
       lineLev = len(self.cmdHierLv) + 1
@@ -87,8 +89,67 @@ class CommonMappingFunc:
                       newDicKey = dicKey + '.' + unicode(unicode(soupTagInst.next_element))
                       restructDic(eachElement, self.reDic, newDicKey)  
       restructDic(soup.sec1, self.reDic, entry)
+      '''
+    def reCreateDic(self, entry = 'output'):
+      intial = -1
+      lineHivInfo = self.lineNumDic
+      lineList = self.ftOutPutLines
+      self.reDic = OrderedDict()
+      totalLineNum =  len(lineHivInfo)
+      keyLocationDict = OrderedDict()
+      
+      dicKey = 'output'
+      dicKeyLineNum = -1
+      currentSPnum = -1
+      
+
+      def getCurrentLineKeyValue(dicKey, currentSPnum, dicKeyLineNum):
+          keyList = []
+          self.reDic[dicKey] = keyList
+          if dicKeyLineNum < totalLineNum - 1:
+              nextLineSPnum = lineHivInfo[dicKeyLineNum + 1]
+              childLineSP = nextLineSPnum
+              if childLineSP <= currentSPnum:
+                  del self.reDic[dicKey]
+              else:
+                  keyList.append(lineList[dicKeyLineNum + 1])
+                  newKey = dicKey + '.' + lineList[dicKeyLineNum + 1]
+                  keyLocationDict[newKey] = dicKeyLineNum + 1
+      
+                  if dicKeyLineNum + 2 >= totalLineNum - 1:
+                      self.reDic[dicKey] = keyList[:]
+                  else:
+      
+                      for lineNum in range(dicKeyLineNum + 2, totalLineNum):
+                          if childLineSP == lineHivInfo[lineNum]:
+                              keyList.append(lineList[lineNum])
+                              newKey = dicKey + '.' + lineList[lineNum]
+                              keyLocationDict[newKey] = lineNum
+                              continue
+                          if childLineSP > lineHivInfo[lineNum] and lineHivInfo[lineNum] > currentSPnum:
+                              keyList.append(lineList[lineNum])
+                              newKey = dicKey + '.' + lineList[lineNum]
+                              keyLocationDict[newKey] = lineNum
+                              childLineSP = lineHivInfo[lineNum]
+                              continue
+                          if lineHivInfo[lineNum] <= currentSPnum:
+                              break
+                      self.reDic[dicKey] = keyList[:]
+      
+          else:
+              del self.reDic[dicKey]
+          if dicKey not in self.reDic.keys():
+              return
+          for eachKey in self.reDic[dicKey]:
+              newDicKey = dicKey + '.' + eachKey
+              newDicKeyLineNum = keyLocationDict[newDicKey]
+              newCurrentSPnum = lineHivInfo[newDicKeyLineNum]
+              getCurrentLineKeyValue(newDicKey, newCurrentSPnum, newDicKeyLineNum)
+
+      getCurrentLineKeyValue(entry, currentSPnum, dicKeyLineNum)
 
     def tabToSpace(self, inputStr, spaceNum = 4):
+      inputStr = inputStr.replace('\r', '')
       return inputStr.replace('\t', " "*spaceNum)
     def getLineSpaceNum(self, line):
       return len(line) - len(line.lstrip(' '))
@@ -449,7 +510,7 @@ class show_cmd_output_analyze():
       tmpList = tmpList + eachList
     recreatedOutput = '\n'.join(tmpList)
     inst = className(recreatedOutput) 
-    inst.covertSpaceToXML()
+    # inst.covertSpaceToXML()
     inst.reCreateDic()
     self.outputDict = inst.reDic
   def entryIsKeyOrNot(self, dictEnty = 'output', dictName = None):
